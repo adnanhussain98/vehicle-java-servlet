@@ -5,6 +5,9 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+
+import models.Vehicle;
 
 public class VehicleDAO {
 	// 1. Load the driver
@@ -23,7 +26,7 @@ public class VehicleDAO {
 			// load driver
 			Class.forName("org.sqlite.JDBC");
 			// url of the database location
-			String url = "jdbc:sqlite:vehicles.sqlite";
+			String url = "jdbc:sqlite:/Users/adnanhussain/Documents/VehicleWebApp/vehicles.sqlite";
 			// initialise connection object
 			conn = DriverManager.getConnection(url);
 
@@ -34,7 +37,8 @@ public class VehicleDAO {
 		return conn;
 	}
 
-	public void getVehicles() throws SQLException {
+	public ArrayList<Vehicle> getVehicles() throws SQLException {
+		ArrayList<Vehicle> allVehicles = new ArrayList<>();
 		// makes the connection local
 		// not making it global gives you the connection when it's available
 		Connection connection = getConnection();
@@ -55,19 +59,41 @@ public class VehicleDAO {
 			String make = rs.getString("make");
 			String model = rs.getString("model");
 			int year = rs.getInt("year");
+			int price = rs.getInt("price");
+			String licenseNumber = rs.getString("license_number");
+			String colour = rs.getString("colour");
+			int numberDoors = rs.getInt("number_doors");
+			String transmission = rs.getString("transmission");
+			int mileage = rs.getInt("mileage");
+			String fuelType = rs.getString("fuel_type");
+			int engineSize = rs.getInt("engine_size");
+			String bodyStyle = rs.getString("body_style");
+			String condition = rs.getString("condition");
+			String notes = rs.getString("notes");
 
 			System.out.println(id + " " + make + " " + model + " " + year);
+
+			// create new Vehicle object
+			Vehicle vehicle = new Vehicle(id, make, model, year, price, licenseNumber, colour, numberDoors,
+					transmission, mileage, fuelType, engineSize, bodyStyle, condition, notes);
+
+			allVehicles.add(vehicle);
 		}
+		return allVehicles;
 
 	}
 
-	public void insertVehicles() throws SQLException {
+	public void insertVehicles(Vehicle vehicle) throws SQLException {
 
 		Connection connection = getConnection();
 		Statement statement = connection.createStatement();
 
 		String sql = "INSERT INTO vehicles (vehicle_id, make, model, year, price, license_number, colour, number_doors, transmission, mileage, fuel_type, engine_size, body_style, condition, Notes )"
-				+ " VALUES (555, 'BMW', '4 Series', 2015, 18000, 'AD15 NXN', 'Black', 5, 'Automatic', 66000, 'Diesel', 2.0, 'Saloon', 'New', 'Best car in the world' );";
+				+ " VALUES (" + vehicle.getVehicleId() + ", '" + vehicle.getMake() + "', '" + vehicle.getModel() + "', "
+				+ vehicle.getYear() + ", " + vehicle.getPrice() + ", '" + vehicle.getLicenseNumber() + "', '"
+				+ vehicle.getColour() + "', " + vehicle.getNumberDoors() + ", '" + vehicle.getTransmission() + "', "
+				+ vehicle.getMileage() + ", '" + vehicle.getFuelType() + "', " + vehicle.getEngineSize() + ", '"
+				+ vehicle.getBodyStyle() + "', '" + vehicle.getCondition() + "', '" + vehicle.getNotes() + "' );";
 		System.out.println(sql);
 
 		statement.executeUpdate(sql);
@@ -75,7 +101,7 @@ public class VehicleDAO {
 
 	}
 
-	public void updateVehicle() throws SQLException {
+	public void updateVehicle(Vehicle updateVehicle) throws SQLException {
 
 		Connection connection = getConnection();
 		Statement statement = connection.createStatement();
@@ -87,6 +113,20 @@ public class VehicleDAO {
 		System.out.println("done");
 
 		connection.close();
+	}
+
+	public void deleteDVD(Vehicle deleteVehicle) throws SQLException {
+
+		Connection connection = getConnection();
+		Statement statement = connection.createStatement();
+
+		String sql = "DELETE FROM vehicles " + " WHERE vehicle_id = " + deleteVehicle.getVehicleId() + ";";
+
+		System.out.println(sql);
+
+		statement.executeUpdate(sql);
+		System.out.println("done");
+
 	}
 
 }

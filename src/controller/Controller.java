@@ -13,7 +13,7 @@ public class Controller {
 		try {
 			dao.getVehicles();
 			//dao.insertVehicles();
-			dao.updateVehicle();
+			//dao.updateVehicle();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
